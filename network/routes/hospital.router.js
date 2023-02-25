@@ -1,0 +1,106 @@
+// Router con la app de express
+const express = require('express');
+const router = express.router();
+const {response} = require('../response');
+
+// Capa de validación de datos
+const validationHandler = require('../../api/middlewares/validator.handler');
+const {createHospitalSchema, updateHospitalSchema, getHospitalSchema} = require('./../../api/schemas/hospital.schema')
+
+// Servicios de hospital
+const HospitalServices = require('../../api/services/hospital.services');
+const service = new HospitalServices();
+
+// RUTAS
+
+// obtener notas de un hospital en particular
+router.get('/get-notes/:id',
+  validationHandler(getHospitalSchema, 'params'),
+  getNotes
+);
+
+// obtener los médicos asociados a un hospital en particular
+router.get('/my-doctors/:id',
+  validationHandler(getHospitalSchema, 'params'),
+  getDoctors
+);
+
+// obtener información de un hospital en particular
+router.get('/:id',
+  validationHandler(getHospitalSchema, 'params'),
+  getHospital
+);
+
+
+// primer ingreso de datos de un hospital, require de un userId -> viene en el token y en el body
+router.post('/basic-data/',
+  validationHandler(createHospitalSchema, 'body'),
+  createHospital
+);
+
+// actualización de datos de un hospital
+router.patch('/:id',
+  validationHandler(getHospitalSchema, 'params'),
+  validationHandler(updateHospitalSchema, 'body'),
+  updateHospital
+);
+
+
+
+// funciones del CRUD
+
+async function createHospital(req, res, next) {
+  try {
+    const body = req.body;
+    const answer = await service.create(body);
+    response.success(req, res, answer);
+  } catch (err) {
+      next(err);
+  };
+};
+
+
+async function getNotes(req, res, next) {
+  try {
+ // el hospital Id viene del token, del body y del params, los tres deben conincidir. Considerar el caso de que no venga token
+    const {id} = req.params;
+    const answer = await service.findNotes(id);
+    response.success(req, res, answer);
+  } catch (err) {
+      next(err);
+  };
+};
+
+async function getHospital(req, res, next) {
+  try {
+    const {id} = req.params;
+    const answer = await service.findOne(id);
+    response.success(req, res, answer);
+  } catch (err) {
+      next(err);
+  };
+};
+
+async function getDoctors(req, res, next) {
+  try {
+    const {id} = req.params;
+    const answer = await service.findMyDoctors(id);
+    response.success(req, res, answer);
+  } catch (err) {
+      next(err);
+  };
+};
+
+async function updateHospital(req, res, next) {
+  try {
+    const {id} = req.params;
+    const body = req.body;
+    const answer = await service.update(id, body);
+    response.success(req, res, answer);
+  } catch (err) {
+      next(err);
+  };
+};
+
+
+module.exports = router

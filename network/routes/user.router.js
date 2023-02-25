@@ -1,4 +1,4 @@
-// Vínculo con la app de express
+// Router con la app de express
 const express = require('express');
 const router = express.router();
 const {response} = require('./../response');
@@ -21,7 +21,7 @@ router.get('/:id',
 );
 
 
-// actualizar datos básicos de un usuario
+// actualizar datos de registro de un usuario
 router.patch('/:id',
   validationHandler(getUserSchema, 'params'),
   validationHandler(updateUserSchema, 'body'),

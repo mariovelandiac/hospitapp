@@ -7,7 +7,7 @@ const {response} = require('./../response');
 const validationHandler = require('../../api/middlewares/validator.handler');
 const {createUserSchema} = require('../../api/schemas/user.schema');
 
-// Servicios de usuarios
+// Servicios de autenticación
 const AuthServices = require('../../api/services/auth.services');
 const service = new AuthServices();
 

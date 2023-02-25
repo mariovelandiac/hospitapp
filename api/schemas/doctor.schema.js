@@ -5,7 +5,7 @@ const name = Joi.string();
 const address = Joi.string();
 const dateOfBirth = Joi.date();
 const gender = Joi.string().max(1); // m: male, f: female, o: other
-const speciality = Joi.array(); // una o más especialidades de un médico/médica
+const speciality = Joi.string(); // una o más especialidades de un médico/médica
 
 
 const createDoctorSchema = Joi.object({
@@ -17,6 +17,7 @@ const createDoctorSchema = Joi.object({
   speciality: speciality.required() // entrada de género opcional, por defecto es null
 });
 
+
 const updateDoctorSchema = Joi.object({
   name: name.optional(),
   address: address.optional(),
@@ -27,8 +28,7 @@ const updateDoctorSchema = Joi.object({
 
 const getDoctorSchema = Joi.object({
   userId: userId.required(),
-})
-
+});
 
 
 module.exports = {
