@@ -4,15 +4,15 @@ const response = {
       error: false,
       status: status,
       body: message
-    })
+    });
   },
   error: function (req, res, message = 'Internal Server Error', status = 500) {
     res.status(status).json({
       error: true,
       status: status,
       body: message
-    })
+    });
   }
-}
+};
 
 module.exports = {response}
