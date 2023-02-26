@@ -26,18 +26,18 @@ router.post('/',
 
 // crear usario de tipo doctor. Solo hospital puede hacerlo
 router.post('/doctor',
+  validationHandler(createUserSchema, 'body'),
   passport.authenticate('jwt', {session: false}), // el hospital debe iniciar sesión para crear el usuario doctor
   checkRoles('hospital'), // solo el rol hospital puede crear un doctor y debe haber iniciado sesión
-  validationHandler(createUserSchema, 'body'),
   createUserDoctor
 );
 
 
 // crear usario de tipo hospital. Solo admin puede hacerlo
 router.post('/hospital',
+  validationHandler(createUserSchema, 'body'),
   passport.authenticate('jwt', {session: false}), // el admin debe iniciar sesión para crear el usuario doctohospitalr
   checkRoles('admin'), // solo el rol admin puede crear un doctor y debe haber iniciado sesión
-  validationHandler(createUserSchema, 'body'),
   createUserHospital
 );
 

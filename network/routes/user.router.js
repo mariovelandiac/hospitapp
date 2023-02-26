@@ -20,27 +20,27 @@ const service = new UserServices();
 
 // obtener un usuario
 router.get('/:id',
+  validationHandler(getUserSchema, 'params'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
   checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver su propio usuario
-  validationHandler(getUserSchema, 'params'),
   getUser
 );
 
 
 // actualizar datos de registro de un usuario
 router.patch('/:id',
-  passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkIdentity(), // validación de identidad: solo quien hace actualizar puede ver su propio usuario
   validationHandler(getUserSchema, 'params'),
   validationHandler(updateUserSchema, 'body'),
+  passport.authenticate('jwt', {session: false}), // validación de firma de token
+  checkIdentity(), // validación de identidad: solo quien hace actualizar puede ver su propio usuario
   updateUser
 );
 
 // eliminar usuario, solo lo puede hacer el propio usuario
 router.delete('/:id',
+  validationHandler(getUserSchema, 'params'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
   checkIdentity(), // validación de identidad: solo quien hace la consulta puede borrar su propio usuario
-  validationHandler(getUserSchema, 'params'),
   deleteUser
 );
 

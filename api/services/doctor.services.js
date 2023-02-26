@@ -72,6 +72,9 @@ class DoctorServices {
         userId: id
       }
     });
+    if (!user) {
+      throw boom.unauthorized();
+    };
     return user.doctorId
   };
 

@@ -19,43 +19,47 @@ const service = new HospitalServices();
 
 // obtener notas de un hospital en particular
 router.get('/get-notes/:id',
-  passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver los registros de sus médicos en la historia clínica
   validationHandler(getHospitalSchema, 'params'),
+  passport.authenticate('jwt', {session: false}), // validación de firma de token
+  checkRole('patient'), // validación de rol
+  checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver los registros de sus médicos en la historia clínica
   getNotes
 );
 
 // obtener los médicos asociados a un hospital en particular
 router.get('/my-doctors/:id',
-  passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver sus doctores
   validationHandler(getHospitalSchema, 'params'),
+  passport.authenticate('jwt', {session: false}),
+  checkRole('patient'), // validación de rol // validación de firma de token
+  checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver sus doctores
   getDoctors
 );
 
 // obtener información de un hospital en particular
 router.get('/:id',
-  passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver sus datos de hospital
   validationHandler(getHospitalSchema, 'params'),
+  passport.authenticate('jwt', {session: false}), // validación de firma de token
+  checkRole('patient'), // validación de rol
+  checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver sus datos de hospital
   getHospital
 );
 
 
 // primer ingreso de datos de un hospital, require de un userId -> viene en el token y en el body
 router.post('/basic-data/',
+  validationHandler(createHospitalSchema, 'body'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
   checkRole('hospital'), // solo rol hospital puede acceder a este endpoint
-  validationHandler(createHospitalSchema, 'body'),
   createHospital
 );
 
 // actualización de datos de un hospital
 router.patch('/:id',
-  passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkIdentity(), // validación de identidad: solo quien hace la consulta puede actualizar sus datos de hospital
   validationHandler(getHospitalSchema, 'params'),
   validationHandler(updateHospitalSchema, 'body'),
+  passport.authenticate('jwt', {session: false}), // validación de firma de token
+  checkRole('patient'), // validación de rol
+  checkIdentity(), // validación de identidad: solo quien hace la consulta puede actualizar sus datos de hospital
   updateHospital
 );
 

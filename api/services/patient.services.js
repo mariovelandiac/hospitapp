@@ -43,6 +43,9 @@ class PatientServices {
         userId: id
       }
     });
+    if (!user) {
+      throw boom.unauthorized();
+    }
     return user.patientId
   };
 

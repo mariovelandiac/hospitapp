@@ -19,35 +19,38 @@ const service = new PatientServices();
 
 // obtener notas de un paciente en particular
 router.get('/my-notes/:id',
-  passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver su propia historia clínica
   validationHandler(getPatientSchema, 'params'),
+  passport.authenticate('jwt', {session: false}), // validación de firma de token
+  checkRole('patient'), // debe ser rol patient para poder consultar sus propias notas
+  checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver su propia historia clínica
   getNotes
 );
 
 // obtener información de un paciente en particular
 router.get('/:id',
-  passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver su propia información
   validationHandler(getPatientSchema, 'params'),
+  passport.authenticate('jwt', {session: false}), // validación de firma de token
+  checkRole('patient'), // debe ser rol patient para poder consultar sus propias datos
+  checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver su propia información
   getPatient
 );
 
 
 // primer ingreso de datos de un paciente, require de un userId -> viene en el body
 router.post('/basic-data/',
+  validationHandler(createPatientSchema, 'body'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
   checkRole('patient'), // validación de rol, solo rol patient puede ingresar
-  validationHandler(createPatientSchema, 'body'),
   createPatient
 );
 
 // actualización de datos de un paciente
 router.patch('/:id',
-  passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkIdentity(), // validación de identidad: solo quien hace la consulta puede modificar su propia información
   validationHandler(getPatientSchema, 'params'),
   validationHandler(updatePatientSchema, 'body'),
+  passport.authenticate('jwt', {session: false}), // validación de firma de token
+  checkRole('patient'), // validación de rol
+  checkIdentity(), // validación de identidad: solo quien hace la consulta puede modificar su propia información
   updatePatient
 );
 

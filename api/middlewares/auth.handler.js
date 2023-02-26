@@ -24,6 +24,10 @@ function checkIdentity() {
     const role = user.role;
     const {id} = req.params; // id de la solicitud
 
+    if (user.sub === id) { // checkIdentity para usuarios
+      next()
+    };
+
     if (role === 'patient') {
       const patientId = await PatientServices.findByUserId(user.sub); // se busca el userid del payload del JWT
       if (patientId === id) {

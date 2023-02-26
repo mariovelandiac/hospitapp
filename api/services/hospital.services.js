@@ -54,6 +54,9 @@ class HospitalServices {
         userId: id
       }
     });
+    if (!user) {
+      throw boom.unauthorized();
+    }
     return user.hospitalId
   };
 
