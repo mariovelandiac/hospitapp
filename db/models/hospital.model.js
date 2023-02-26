@@ -20,7 +20,7 @@ const HospitalSchema = {
   },
   services: {
     allowNull: false,
-    type: DataTypes.ARRAY
+    type: DataTypes.ARRAY(DataTypes.STRING)
   },
   userId: {
     field: 'user_id',

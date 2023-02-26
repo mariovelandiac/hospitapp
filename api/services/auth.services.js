@@ -1,13 +1,13 @@
 const boom = require("@hapi/boom"); // librería para gestionar errores
 const bcrypt = require('bcrypt'); // librería para hash de contraseñas
 const jwt = require('jsonwebtoken'); // librería para firmar y verificar JWT
-const {config} = require('./../config/config'); // archivo de configuración
+const {config} = require('./../../config/config'); // archivo de configuración
 const nodemailer = require('nodemailer'); // nodemailer para envío de correos
 const {models} = require('./../../libs/sequelize'); // modelos del ORM para la DB
 const uuid = require('uuid'); // librería para creación de uuid
 
 //servicios externos
-const UserServices = require('./users.services');
+const UserServices = require('./user.services');
 const service = new UserServices();
 
 class AuthService {
