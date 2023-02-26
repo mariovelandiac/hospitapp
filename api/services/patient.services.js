@@ -1,6 +1,7 @@
 const boom = require("@hapi/boom"); // librería para gestionar errores
 const { models } = require('./../../libs/sequelize'); // modelos del ORM para la DB
 const uuid = require('uuid'); // librería para creación de uuid
+const fs = require('fs');
 
 // Servicios de usuarios
 const UserServices = require('./user.services');
@@ -27,6 +28,13 @@ class PatientServices {
       include: ['doctor', 'hospital', 'patient']
     });
     return patientNotes;
+  };
+
+  async downloadMyNotes(id) {
+    const patientNotes = await this.findMyNotes(id);
+    const date = new Date();
+    fs.appendFile(`./../../public/${date}.${id}.txt`, patientNotes.toString(), () => {})
+    return 'ok'
   };
 
   async findOne(id) {
