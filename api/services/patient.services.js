@@ -24,7 +24,9 @@ class PatientServices {
   };
 
   async findOne(id) {
-    const patient = await models.Patient.findByPk(id);
+    const patient = await models.Patient.findByPk(id, {
+      include: ['user']
+    });
     if (!patient) {
       throw boom.notFound('patient not found');
     }

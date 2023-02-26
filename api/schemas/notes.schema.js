@@ -7,7 +7,6 @@ const patientId = Joi.string().uuid();
 const note = Joi.string();
 const speciality = Joi.string();
 const healthState = Joi.string();
-const date = Joi.date();
 const validity = Joi.boolean();
 const hospitalNote = Joi.string();
 
@@ -19,7 +18,6 @@ const createNoteSchema = Joi.object({
   note: note.required(),
   speciality: speciality.required(),
   healthState: healthState.required(),
-  date: date.required(),
 });
 
 // la validación y el hospitalNote son requeridos para modificar la nota médica

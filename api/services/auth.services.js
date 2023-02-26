@@ -94,10 +94,8 @@ class AuthService {
     if (!credential.isVerify) {
       throw boom.unauthorized('please verify your email'); // error de que se debe cambiar contraseña para poder ingresar
     }
-    if (credential.role === 'doctor' || credential.role === 'hospital') {
-      if (!credential.modifyPassword) {
+    if (credential.role === 'doctor' && !credential.modifyPassword) {
         throw boom.unauthorized('please change your password'); // error de que se debe cambiar contraseña para poder ingresar
-      }
     }
     const token = jwt.sign(payload, config.jwtsecret);
     return {
@@ -113,7 +111,9 @@ class AuthService {
     const token = jwt.sign(payload, config.jwtRecovery, {expiresIn: expiresIn});
     const link = `${config.host}/verify-email?token=${token}`;
     const endpoint = `${config.host}/api/v1/auth/change-password`;
+
     await service.update(credential.id, {recoveryToken: token}); // inclusión del recovery Token en la base de datos para futura validación
+
     const mail = {
       from: config.mailuser, // sender address
       to: `${credential.email}`, // list of receivers

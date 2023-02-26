@@ -15,6 +15,7 @@ class DoctorServices {
   constructor() {};
 
   async create(data) {
+    await hospital.findOne(data.hospitalId); // validación de existencia del hospital al que se va a registrar el doctor
     const doctorId = uuid.v4(); // creación de doctorId
     const newDoctor = await models.Doctor.create({
       ...data,
@@ -31,6 +32,11 @@ class DoctorServices {
     // validación de que el doctor ingrese el hospital para el cual trabaja
     if (doctor.hospitalId != data.hospitalId) {
       throw boom.unauthorized('The doctor does not work for that hospital')
+    };
+
+    // validación de especialidad
+    if (doctor.speciality != data.speciality) {
+      throw boom.unauthorized('The doctor does not have that speciliaty registred')
     };
 
     const noteId = uuid.v4(); // creación de noteId
