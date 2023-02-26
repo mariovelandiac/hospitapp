@@ -1,8 +1,7 @@
-const { required } = require("joi");
 const Joi = require("joi");
 
 const email = Joi.string().email();
-const password = Joi.string().min(7).max(30).alphanum();
+const password = Joi.string().min(4).max(30).alphanum();
 const token = Joi.string();
 
 
@@ -16,7 +15,7 @@ const newPasswordSchema = Joi.object({
 });
 
 const verifyEmailSchema = Joi.object({
-  token: required()
+  token: token.required()
 });
 
 const loginSchema = Joi.object({

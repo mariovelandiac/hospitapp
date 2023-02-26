@@ -1,5 +1,6 @@
 const Joi = require('joi');
 
+const userId = Joi.string().uuid();
 const pid = Joi.number().min(4); // personal id con mínimo 4 numeros
 const email = Joi.string().email();
 const phone = Joi.number().min(7); // número de telefono de mínimo 7 cifras
@@ -21,7 +22,7 @@ const updateUserSchema = Joi.object({
 });
 
 const getUserSchema = Joi.object({
-  pid: pid.required()
+  id: userId.required()
 });
 
 

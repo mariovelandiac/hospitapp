@@ -6,11 +6,9 @@ const nodemailer = require('nodemailer'); // nodemailer para envío de correos
 const {models} = require('./../../libs/sequelize'); // modelos del ORM para la DB
 const uuid = require('uuid'); // librería para creación de uuid
 
-//servicios externos
-const UserServices = require('./user.services');
-const service = new UserServices();
-
-class AuthService {
+class AuthServices {
+  constructor() {
+  }
 
   async create(userId, password, email, role) {
     const data = { // datos iniciales de usuario
@@ -28,10 +26,12 @@ class AuthService {
   }
 
   async verifyEmail(id, role, email) {
+
     const payload = {
-      sub: id,
+      sub: id, // id de autenticación, diferente al de usuario
       role: role
     };
+
     const expiresIn = '24h'; // tiempo de expiración del token
     const token = jwt.sign(payload, config.jwtVerifyEmail, {expiresIn: expiresIn});
     await this.update(id, {verifyToken: token}); // registro de token en la base de datos de Auth
@@ -47,13 +47,17 @@ class AuthService {
               <br> NotaAclaratoria: El endpoint para enviar el token es ${endpoint}, éste debe ser enviado a través del body</b>`,
       };
     const answer = await this.sendMail(mail);
-    return answer
+    return `${answer.message}: please check your email ${email} to continue`
   };
 
   async confirmEmail(token) {
     try {
-      const payload = jwt.verify(token, config.jwtVerifyEmail);
-      const credential = this.findOne(payload.sub);
+      const payload = jwt.verify(token, config.jwtVerifyEmail); // se verifica que sea la misma firma
+      const credential = await this.findOne(payload.sub); // se busca la credencial con el id firmado
+
+      if(credential.isVerify) { // validación de que el correo ya fue verificado
+        return `el email ${credential.email} ya ha sido verificado`
+      }
 
       if (credential.verifyToken !== token) { // validación de correspondencia con el token enviado
         throw boom.unauthorized();
@@ -64,7 +68,7 @@ class AuthService {
       if (credential.role === 'doctor' || credential.role === 'hospital') { // en caso de que el rol sea hospital o doctor
         if (!credential.modifyPassword) { // se valida que la contraseña no haya sido modificada
           const rta = await this.sendRecovery(credential.email);
-          const message = `${rta}: an email to change your password has been sent to ${credential.email}, please update your password`
+          const message = `${rta.message}: an email to change your password has been sent to ${credential.email}, please update your password`
           return message
         };
       };
@@ -82,7 +86,7 @@ class AuthService {
     if (!isMatch) {
       throw boom.unauthorized(), false;
     }
-    delete credential.dataValues.password
+    delete credential.dataValues.password // se elimina la contraseña del objeto en memoria
     return credential
   };
 
@@ -93,9 +97,11 @@ class AuthService {
     };
     if (!credential.isVerify) {
       throw boom.unauthorized('please verify your email'); // error de que se debe cambiar contraseña para poder ingresar
-    }
-    if (credential.role === 'doctor' && !credential.modifyPassword) {
-        throw boom.unauthorized('please change your password'); // error de que se debe cambiar contraseña para poder ingresar
+    };
+    if (credential.role === 'doctor' || credential.role === 'hospital') {
+        if (!credential.modifyPassword) {
+          throw boom.unauthorized('please change your password'); // error de que se debe cambiar contraseña para poder ingresar
+        }
     }
     const token = jwt.sign(payload, config.jwtsecret);
     return {
@@ -106,13 +112,16 @@ class AuthService {
 
   async sendRecovery(email) {
     const credential = await this.findByEmail(email);
-    const payload = { sub: credential.id };
-    const expiresIn = '15min'; // tiempo de expiración del token
+    const payload = { sub: credential.dataValues.id };
+    const expiresIn = '15h'; // tiempo de expiración del token
+
+    // el token funciona con el id de credential
     const token = jwt.sign(payload, config.jwtRecovery, {expiresIn: expiresIn});
+
     const link = `${config.host}/verify-email?token=${token}`;
     const endpoint = `${config.host}/api/v1/auth/change-password`;
 
-    await service.update(credential.id, {recoveryToken: token}); // inclusión del recovery Token en la base de datos para futura validación
+    await this.update(credential.id, {recoveryToken: token}); // inclusión del recovery Token en la base de datos para futura validación
 
     const mail = {
       from: config.mailuser, // sender address
@@ -130,12 +139,14 @@ class AuthService {
   async changePassword(token, newPassword) {
     try {
       const payload = jwt.verify(token, config.jwtRecovery);
-      const credential = await service.findOne(payload.sub);
-      if (credential.recoveryToken !== token) { // validación del recoveryToken
+      const credential = await this.findOne(payload.sub);
+
+      if (credential.dataValues.recoveryToken !== token) { // validación del recoveryToken
         throw boom.unauthorized();
-      }
+      };
+
       const hash = await bcrypt.hash(newPassword, 10);
-      await service.update(credential.id, {
+      await this.update(credential.id, {
         recoveryToken: null,
         password: hash,
         lastRecovery: new Date(),
@@ -190,7 +201,7 @@ class AuthService {
   };
 
   async update(id, changes) {
-    const credential = this.findOne(id)
+    const credential = await this.findOne(id);
     const answer = await credential.update(changes);
     return answer
   };
@@ -199,4 +210,4 @@ class AuthService {
 
 
 
-module.exports = AuthService
+module.exports = AuthServices

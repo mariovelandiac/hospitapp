@@ -15,16 +15,16 @@ const {response} = require('./../response');
 // función de redireccionamiento de peticiones según el endpoint
 function routerAPI(app) {
   const router = express.Router();
-  app.use('/', (req, res) =>{
-    res.send('Hola, pronto te voy a redirigir'); // la raíz es redirigida a /api/v1
+
+  app.get('/api/v1', (req, res) =>{
+    res.send('Bienvido a la API REST para gestionar tu historia clínica centralizada'); // la raíz es redirigida a /api/v1
   });
 
-  app.use('/api/v1/', router);
-
-  app.use('/api/v1/docs', (req, res) => {
+  app.get('/api/v1/docs', (req, res) => {
     res.send('Aquí va a ir la documentación de la API'); // documentación de la api
   });
 
+  app.use('/api/v1/', router);
   router.use('/user', userRouter);         // rutas para los usuarios
   router.use('/signup', signupRouter);     // ruta para registro
   router.use('/auth', authRouter);         // rutas para autenticación

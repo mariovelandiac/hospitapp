@@ -1,6 +1,6 @@
 // Vínculo con la app de express
 const express = require('express');
-const router = express.router();
+const router = express.Router();
 const {response} = require('../response');
 
 // Capa de autenticación:

@@ -71,4 +71,4 @@ class Patient extends Model {
   }
 }
 
-module.exports = { USER_TABLE, PatientSchema, Patient }
+module.exports = { PATIENT_TABLE, PatientSchema, Patient }

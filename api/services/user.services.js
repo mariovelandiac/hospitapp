@@ -13,13 +13,13 @@ class UserServices {
   async createUser(data, role) {
     const userId = uuid.v4(); // creación de userId
     const hash = await bcrypt.hash(data.password, 10); // hasheo de contraseña
-    const answer = await authService.create(userId, hash, data.email, role); // creación de usuario según rol en la tabla de Auth
     delete data.password // no se guarda en user la contraseña
     const newUser = await models.User.create({
       ...data,
       id: userId,
       role: role
     });
+    const answer = await authService.create(userId, hash, data.email, role); // creación de usuario según rol en la tabla de Auth
     return {
       newUser,
       message: answer
@@ -32,6 +32,37 @@ class UserServices {
       throw boom.notFound('user not found');
     }
     return user
+  };
+
+
+  async findOneDoctor(id) {
+    const user = await models.User.findByPk(id, {
+      include: ['doctor']
+    });
+    if (!user) {
+      throw boom.notFound('user not found');
+    }
+    return user.dataValues
+  };
+
+  async findOnePatient(id) {
+    const user = await models.User.findByPk(id, {
+      include: ['patient']
+    });
+    if (!user) {
+      throw boom.notFound('user not found');
+    }
+    return user.dataValues
+  };
+
+  async findOneHospital(id) {
+    const user = await models.User.findByPk(id, {
+      include: ['hospital']
+    });
+    if (!user) {
+      throw boom.notFound('user not found');
+    }
+    return user.dataValues
   };
 
   async update(id, changes) {

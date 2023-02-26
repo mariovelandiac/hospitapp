@@ -1,11 +1,11 @@
 // Router con la app de express
 const express = require('express');
-const router = express.router();
+const router = express.Router();
 const {response} = require('./../response');
 
 // Capa de autenticación:
 const passport = require('passport');
-const {checkRoles} = require('./../../api/middlewares/auth.handler');
+const {checkRole} = require('./../../api/middlewares/auth.handler');
 
 
 // Capa de validación de datos
@@ -28,7 +28,7 @@ router.post('/',
 router.post('/doctor',
   validationHandler(createUserSchema, 'body'),
   passport.authenticate('jwt', {session: false}), // el hospital debe iniciar sesión para crear el usuario doctor
-  checkRoles('hospital'), // solo el rol hospital puede crear un doctor y debe haber iniciado sesión
+  checkRole('hospital'), // solo el rol hospital puede crear un doctor y debe haber iniciado sesión
   createUserDoctor
 );
 
@@ -37,7 +37,7 @@ router.post('/doctor',
 router.post('/hospital',
   validationHandler(createUserSchema, 'body'),
   passport.authenticate('jwt', {session: false}), // el admin debe iniciar sesión para crear el usuario doctohospitalr
-  checkRoles('admin'), // solo el rol admin puede crear un doctor y debe haber iniciado sesión
+  checkRole('admin'), // solo el rol admin puede crear un doctor y debe haber iniciado sesión
   createUserHospital
 );
 

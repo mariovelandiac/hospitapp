@@ -25,7 +25,7 @@ const UserSchema = {
   },
   phone: {
     allwNull: false,
-    type: DataTypes.INTEGER
+    type: DataTypes.STRING
   },
   createdAt: {
     allowNull: false,

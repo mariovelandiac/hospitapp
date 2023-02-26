@@ -5,7 +5,7 @@ const {response} = require('./../response');
 
 // Capa de autenticación:
 const passport = require('passport');
-const {checkIdentity} = require('./../../api/middlewares/auth.handler');
+const {checkUserIdentity} = require('./../../api/middlewares/auth.handler');
 
 // Capa de validación de datos
 const validationHandler = require('../../api/middlewares/validator.handler');
@@ -22,7 +22,7 @@ const service = new UserServices();
 router.get('/:id',
   validationHandler(getUserSchema, 'params'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver su propio usuario
+  checkUserIdentity(), // validación de identidad: solo quien hace la consulta puede ver su propio usuario
   getUser
 );
 
@@ -32,7 +32,7 @@ router.patch('/:id',
   validationHandler(getUserSchema, 'params'),
   validationHandler(updateUserSchema, 'body'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkIdentity(), // validación de identidad: solo quien hace actualizar puede ver su propio usuario
+  checkUserIdentity(), // validación de identidad: solo quien hace actualizar puede ver su propio usuario
   updateUser
 );
 
@@ -40,7 +40,7 @@ router.patch('/:id',
 router.delete('/:id',
   validationHandler(getUserSchema, 'params'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkIdentity(), // validación de identidad: solo quien hace la consulta puede borrar su propio usuario
+  checkUserIdentity(), // validación de identidad: solo quien hace la consulta puede borrar su propio usuario
   deleteUser
 );
 
@@ -49,8 +49,22 @@ router.delete('/:id',
 async function getUser(req, res, next) {
   try {
     const {id} = req.params;
-    const user = await service.findOne(id);
-    response.success(req, res, user);
+
+    if (req.user.role === 'patient') {
+      const userFound = await service.findOnePatient(id);
+      response.success(req, res, userFound);
+    };
+    
+    if (req.user.role === 'doctor') {
+      const userFound = await service.findOneDoctor(id);
+      response.success(req, res, userFound);
+    };
+
+    if (req.user.role === 'hospital') {
+      const userFound = await service.findOneHospital(id);
+      response.success(req, res, userFound);
+    };
+
   } catch (err) {
     next(err);
   };

@@ -10,12 +10,17 @@ const patient = new PatientServices();
 const HospitalServices = require('./hospital.services.js');
 const hospital = new HospitalServices();
 
+// Servicios de usuarios
+const UserServices = require('./user.services');
+const user = new UserServices();
+
 
 class DoctorServices {
   constructor() {};
 
   async create(data) {
     await hospital.findOne(data.hospitalId); // validación de existencia del hospital al que se va a registrar el doctor
+    await user.findOne(data.userId); // validación de existencia de usuario    
     const doctorId = uuid.v4(); // creación de doctorId
     const newDoctor = await models.Doctor.create({
       ...data,
@@ -42,7 +47,8 @@ class DoctorServices {
     const noteId = uuid.v4(); // creación de noteId
     const note = await models.Notes.create({
       ...data,
-      id: noteId
+      id: noteId,
+      validity: true
     });
     return note
   }
@@ -51,7 +57,8 @@ class DoctorServices {
     const doctorNotes = await models.Notes.findAll({
       where: {
         doctorId: id
-      }
+      },
+      include: ['doctor', 'hospital', 'patient']
     });
     return doctorNotes;
   };
@@ -72,16 +79,17 @@ class DoctorServices {
     return answer
   };
 
-  static async findByUserId(id) {
+  async findByUserId(userId) {
+
     const user = await models.Doctor.findOne({
       where: {
-        userId: id
-      }
+        userId: userId
+      },
     });
     if (!user) {
       throw boom.unauthorized();
     };
-    return user.doctorId
+    return user.dataValues.id
   };
 
 }

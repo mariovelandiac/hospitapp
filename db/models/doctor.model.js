@@ -83,4 +83,4 @@ class Doctor extends Model {
   }
 }
 
-module.exports = { USER_TABLE, DoctorSchema, Doctor }
+module.exports = { DOCTOR_TABLE, DoctorSchema, Doctor }

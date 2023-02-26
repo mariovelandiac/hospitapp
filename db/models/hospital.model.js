@@ -66,4 +66,4 @@ class Hospital extends Model {
   }
 }
 
-module.exports = { USER_TABLE, HospitalSchema, Hospital }
+module.exports = { HOSPITAL_TABLE, HospitalSchema, Hospital }

@@ -1,6 +1,6 @@
 // Router con la app de express
 const express = require('express');
-const router = express.router();
+const router = express.Router();
 const {response} = require('../response');
 
 // Capa de autenticación:
@@ -21,7 +21,7 @@ const service = new HospitalServices();
 router.get('/get-notes/:id',
   validationHandler(getHospitalSchema, 'params'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkRole('patient'), // validación de rol
+  checkRole('hospital'), // validación de rol
   checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver los registros de sus médicos en la historia clínica
   getNotes
 );
@@ -30,7 +30,7 @@ router.get('/get-notes/:id',
 router.get('/my-doctors/:id',
   validationHandler(getHospitalSchema, 'params'),
   passport.authenticate('jwt', {session: false}),
-  checkRole('patient'), // validación de rol // validación de firma de token
+  checkRole('hospital'), // validación de rol // validación de firma de token
   checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver sus doctores
   getDoctors
 );
@@ -39,7 +39,7 @@ router.get('/my-doctors/:id',
 router.get('/:id',
   validationHandler(getHospitalSchema, 'params'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkRole('patient'), // validación de rol
+  checkRole('hospital'), // validación de rol
   checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver sus datos de hospital
   getHospital
 );
@@ -58,7 +58,7 @@ router.patch('/:id',
   validationHandler(getHospitalSchema, 'params'),
   validationHandler(updateHospitalSchema, 'body'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkRole('patient'), // validación de rol
+  checkRole('hospital'), // validación de rol
   checkIdentity(), // validación de identidad: solo quien hace la consulta puede actualizar sus datos de hospital
   updateHospital
 );

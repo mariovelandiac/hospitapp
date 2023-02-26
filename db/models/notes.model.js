@@ -1,7 +1,9 @@
 const { Model, DataTypes, Sequelize} = require("sequelize");
 
 // relación con la tabla User
-const {USER_TABLE} = require('./user.model');
+const {DOCTOR_TABLE} = require('./doctor.model');
+const {PATIENT_TABLE} = require('./patient.model');
+const {HOSPITAL_TABLE} = require('./hospital.model');
 const NOTES_TABLE = "notes";
 
 const NotesSchema = {
@@ -37,7 +39,7 @@ const NotesSchema = {
     allowNull: false,
     type: DataTypes.UUID,
     references: {
-      model: USER_TABLE,
+      model: PATIENT_TABLE,
       key: 'id'
     },
     onUpdate: 'CASCADE',
@@ -48,7 +50,7 @@ const NotesSchema = {
     allowNull: false,
     type: DataTypes.UUID,
     references: {
-      model: USER_TABLE,
+      model: DOCTOR_TABLE,
       key: 'id'
     },
     onUpdate: 'CASCADE',
@@ -59,7 +61,7 @@ const NotesSchema = {
     allowNull: false,
     type: DataTypes.UUID,
     references: {
-      model: USER_TABLE,
+      model: HOSPITAL_TABLE,
       key: 'id'
     },
     onUpdate: 'CASCADE',

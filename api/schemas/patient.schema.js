@@ -24,7 +24,7 @@ const updatePatientSchema = Joi.object({
 });
 
 const getPatientSchema = Joi.object({
-  patientId: patientId.required(),
+  id: patientId.required(),
 });
 
 module.exports = {

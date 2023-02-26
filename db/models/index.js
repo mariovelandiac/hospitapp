@@ -9,16 +9,16 @@ function setupModels(sequelize) {
   Auth.init(AuthSchema, Auth.config(sequelize));
   User.init(UserSchema, User.config(sequelize));
   Patient.init(PatientSchema, Patient.config(sequelize));
-  Doctor.init(DoctorSchema, Doctor.config(sequelize));
   Hospital.init(HospitalSchema, Hospital.config(sequelize));
+  Doctor.init(DoctorSchema, Doctor.config(sequelize));
   Notes.init(NotesSchema, Notes.config(sequelize));
 
   Auth.associate(sequelize.models);
   User.associate(sequelize.models);
-  Patient.associate(sequelize.models);
-  Doctor.associate(sequelize.models);
-  Hospital.associate(sequelize.models);
   Notes.associate(sequelize.models);
+  Hospital.associate(sequelize.models);
+  Doctor.associate(sequelize.models);
+  Patient.associate(sequelize.models);
 
 }
 

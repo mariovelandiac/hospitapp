@@ -20,7 +20,7 @@ const updateHospitalSchema = Joi.object({
 });
 
 const getHospitalSchema = Joi.object({
-  hospitalId: hospitalId.required(),
+  id: hospitalId.required(),
 })
 
 

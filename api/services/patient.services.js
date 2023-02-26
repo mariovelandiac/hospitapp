@@ -2,11 +2,16 @@ const boom = require("@hapi/boom"); // librería para gestionar errores
 const { models } = require('./../../libs/sequelize'); // modelos del ORM para la DB
 const uuid = require('uuid'); // librería para creación de uuid
 
+// Servicios de usuarios
+const UserServices = require('./user.services');
+const user = new UserServices();
+
 class PatientServices {
   constructor() {};
 
   async create(data) {
     const patientId = uuid.v4(); // creación de patientId
+    await user.findOne(data.userId); // validación de existencia de usuari
     const newPatient = await models.Patient.create({
       ...data,
       id: patientId
@@ -17,8 +22,9 @@ class PatientServices {
   async findMyNotes(id) {
     const patientNotes = await models.Notes.findAll({
       where: {
-        patiendId: id
-      }
+        patientId: id
+      },
+      include: ['doctor', 'hospital', 'patient']
     });
     return patientNotes;
   };
@@ -39,16 +45,16 @@ class PatientServices {
     return answer
   };
 
-  static async findByUserId(id) {
+  async findByUserId(userId) {
     const user = await models.Patient.findOne({
       where: {
-        userId: id
+        userId: userId
       }
     });
     if (!user) {
       throw boom.unauthorized();
     }
-    return user.patientId
+    return user.dataValues.id
   };
 
 }

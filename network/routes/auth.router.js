@@ -1,6 +1,6 @@
 // Vínculo con la app de express
 const express = require('express');
-const router = express.router();
+const router = express.Router();
 const {response} = require('./../response');
 
 // Capa de autenticación y autorización
@@ -70,8 +70,8 @@ async function login(req, res, next) {
 
 async function recoveryPassword(req, res, next) {
   try {
-    const {token, newPassword} = req.body;
-    const answer = await service.sendRecovery(token, newPassword);
+    const {email} = req.body;
+    const answer = await service.sendRecovery(email);
     response.success(req, res, answer);
   } catch (err) {
       next(err);
@@ -80,8 +80,8 @@ async function recoveryPassword(req, res, next) {
 
 async function changePassword(req, res, next) {
   try {
-    const {token} = req.body;
-    const answer = await service.changePassword(token);
+    const {token, newPassword} = req.body;
+    const answer = await service.changePassword(token,newPassword);
     response.success(req, res, answer);
   } catch (err) {
       next(err);

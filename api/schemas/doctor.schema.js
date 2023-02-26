@@ -29,7 +29,7 @@ const updateDoctorSchema = Joi.object({
 });
 
 const getDoctorSchema = Joi.object({
-  doctorId: doctorId.required(),
+  id: doctorId.required(),
 });
 
 

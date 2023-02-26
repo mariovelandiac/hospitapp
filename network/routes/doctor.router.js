@@ -1,6 +1,6 @@
 // Router con la app de express
 const express = require('express');
-const router = express.router();
+const router = express.Router();
 const {response} = require('../response');
 
 // Capa de autenticación:
@@ -22,7 +22,7 @@ const service = new DoctorServices();
 // obtener notas de un médico/a en particular
 router.get('/my-notes/:id',
   passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkRole('patient'), // validación de rol
+  checkRole('doctor'), // validación de rol
   checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver sus resgistros de historia clínica
   getNotes
 );
@@ -31,7 +31,7 @@ router.get('/my-notes/:id',
 router.get('/:id',
   validationHandler(getDoctorSchema, 'params'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkRole('patient'), // validación de rol
+  checkRole('doctor'), // validación de rol
   checkIdentity(), // validación de identidad: solo quien hace la consulta puede ver sus propios datos
   getDoctor
 );
@@ -40,7 +40,6 @@ router.get('/:id',
 router.post('/add-note',
   validationHandler(createNoteSchema, 'body'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkRole('doctor'), // solo un médico/a puede crear una nota
   createNote
 );
 
@@ -57,7 +56,7 @@ router.patch('/:id',
   validationHandler(getDoctorSchema, 'params'),
   validationHandler(updateDoctorSchema, 'body'),
   passport.authenticate('jwt', {session: false}), // validación de firma de token
-  checkRole('patient'), // validación de rol
+  checkRole('doctor'), // validación de rol
   checkIdentity(), // validación de identidad: solo quien hace la consulta puede modificar su propia información
   updateDoctor
 );
