@@ -3,6 +3,11 @@ const express = require('express');
 const router = express.router();
 const {response} = require('../response');
 
+// Capa de autenticación:
+const passport = require('passport');
+const {checkIdentity, checkRole} = require('./../../api/middlewares/auth.handler');
+
+
 // Capa de validación de datos
 const validationHandler = require('../../api/middlewares/validator.handler');
 const {getNoteSchema, updateNoteSchema} = require('../../api/schemas/notes.schema');
@@ -15,8 +20,11 @@ const service = new NotesServices();
 
 // actualización de notas, solo para rol 'hospital'
 router.patch('/:id',
-  validationHandler(getNoteSchema, 'params'),
+  validationHandler(getNoteSchema, 'params'), // validación de datos
   validationHandler(updateNoteSchema, 'body'),
+  passport.authenticate('jwt', {session: false}), // validación de firma de token
+  checkRole('hospital'), // validación de rol
+  checkIdentity(), // validación de identidad
   updateNote
 );
 
@@ -28,7 +36,7 @@ async function updateNote(req, res, next) {
   try {
     const body = req.body;
     const {id} = req.params;
-    const answer = await service.updateNote(id, body);
+    const answer = await service.update(id, body);
     response.success(req, res, answer);
   } catch (err) {
     next(err);

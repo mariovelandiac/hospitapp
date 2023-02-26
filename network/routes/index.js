@@ -19,9 +19,7 @@ function routerAPI(app) {
     res.send('Hola, pronto te voy a redirigir'); // la raíz es redirigida a /api/v1
   });
 
-  app.use('/api/v1/', (req, res) =>{
-    res.send('Hola, aquí íria un redireccionamiento a la documentación'); // api/v1/ va redirigida a la documentación
-  });
+  app.use('/api/v1/', router);
 
   app.use('/api/v1/docs', (req, res) => {
     res.send('Aquí va a ir la documentación de la API'); // documentación de la api

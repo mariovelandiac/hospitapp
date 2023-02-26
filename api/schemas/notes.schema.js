@@ -1,9 +1,9 @@
 const Joi = require('joi');
 
-const noteId = Joi.string();
-const hospitalId = Joi.string();
-const doctorId = Joi.string();
-const patientId = Joi.string();
+const noteId = Joi.string().uuid();
+const hospitalId = Joi.string().uuid();
+const doctorId = Joi.string().uuid();
+const patientId = Joi.string().uuid();
 const note = Joi.string();
 const speciality = Joi.string();
 const healthState = Joi.string();

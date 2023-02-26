@@ -1,11 +1,11 @@
 const Joi = require('joi');
 
-const userId = Joi.string();
+const userId = Joi.string().uuid();
 const name = Joi.string();
 const address = Joi.string();
 const dateOfBirth = Joi.date();
 const gender = Joi.string().max(1); // m: male, f: female, o: other
-
+const patientId = Joi.string().uuid();
 
 
 const createPatientSchema = Joi.object({
@@ -23,9 +23,12 @@ const updatePatientSchema = Joi.object({
   gender: gender.optional()
 });
 
-
+const getPatientSchema = Joi.object({
+  patientId: patientId.required(),
+});
 
 module.exports = {
   createPatientSchema,
   updatePatientSchema,
+ getPatientSchema
 }
